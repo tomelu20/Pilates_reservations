@@ -13,6 +13,7 @@ function Navbar({ activeTab, setActiveTab }) {
     { id: 'instructori', label: 'Instructori' },
     { id: 'tarife', label: 'Tarife' },
     { id: 'locatii', label: 'Locații' },
+    { id: 'admin-panell', label: 'Panou Admin' },
   ];
 
   return (
