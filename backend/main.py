@@ -11,6 +11,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from config import settings
 # Aici vei include ulterior routerele tale (ex: auth, classes, bookings, waitlist)
 # from routers import auth, classes, bookings, waitlist, reminders
+from routes.auth_routes import router as auth_router
 
 scheduler = BackgroundScheduler()
 
@@ -43,7 +44,7 @@ app.add_middleware(
 )
 
 # Aici vei adăuga rutele când le creezi:
-# app.include_router(auth.router)
+app.include_router(auth_router)
 # app.include_router(classes.router)
 # app.include_router(bookings.router)
 # app.include_router(waitlist.router)
