@@ -7,15 +7,29 @@ export default function App() {
     const [activeTab, setActiveTab] = useState('acasa');
     const [currentUser, setCurrentUser] = useState(null);
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setCurrentUser(null);
+        setActiveTab('acasa');
+    };
+
     const renderContent = () => {
         if (activeTab === 'login') {
             return <Login setActiveTab={setActiveTab} onLoginSuccess={setCurrentUser} />;
         }
         if (activeTab === 'register' || activeTab === 'devino-membru') {
-            return <Register setActiveTab={setActiveTab} />;
+            // Trimitem onLoginSuccess și aici pentru ca Google Register să logheze instant utilizatorul
+            return <Register setActiveTab={setActiveTab} onLoginSuccess={setCurrentUser} />;
         }
 
-        return <HomePage activeTab={activeTab} setActiveTab={setActiveTab} currentUser={currentUser} />;
+        return (
+            <HomePage
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+            />
+        );
     };
 
     return (

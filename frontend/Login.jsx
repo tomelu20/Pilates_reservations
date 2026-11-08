@@ -45,8 +45,8 @@ export default function Login({ setActiveTab, onLoginSuccess }) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: googleUser.email,
-                        nume: googleUser.family_name || googleUser.name,
-                        prenume: googleUser.given_name || '',
+                        nume: googleUser.family_name || '',          // Numele de familie
+                        prenume: googleUser.given_name || googleUser.name, // Prenumele corect
                         google_id: googleUser.sub,
                     }),
                 });
@@ -55,8 +55,8 @@ export default function Login({ setActiveTab, onLoginSuccess }) {
                 if (!response.ok) throw new Error(data.detail || 'Eroare la autentificarea cu Google.');
 
                 localStorage.setItem('token', data.access_token);
-                if (onLoginSuccess) onLoginSuccess(data.user);
-                setActiveTab('acasa');
+                if (onLoginSuccess) onLoginSuccess(data.user); // Trimite utilizatorul în sesiune
+                setActiveTab('acasa'); // Redirecționare directă pe site
             } catch (err) {
                 setError(err.message);
             }

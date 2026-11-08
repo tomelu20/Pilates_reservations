@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 
-export default function Register({ setActiveTab }) {
+export default function Register({ setActiveTab, onLoginSuccess }) {
     const [step, setStep] = useState('register'); // 'register' sau 'verify'
     const [registeredEmail, setRegisteredEmail] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
@@ -86,7 +86,8 @@ export default function Register({ setActiveTab }) {
             if (!response.ok) throw new Error(data.detail || 'Cod de verificare invalid.');
 
             setSuccess('Cont activat cu succes! Redirecționare către autentificare...');
-            setTimeout(() => setActiveTab('login'), 3000);
+            // Redirecționează utilizatorul clasic către pagina de Login imediat după verificare
+            setTimeout(() => setActiveTab('login'), 2000);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -107,8 +108,8 @@ export default function Register({ setActiveTab }) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: googleUser.email,
-                        nume: googleUser.family_name || googleUser.name,
-                        prenume: googleUser.given_name || '',
+                        nume: googleUser.family_name || '',          // Nume de familie
+                        prenume: googleUser.given_name || googleUser.name, // Prenume corect
                         google_id: googleUser.sub,
                     }),
                 });
@@ -117,6 +118,9 @@ export default function Register({ setActiveTab }) {
                 if (!response.ok) throw new Error(data.detail || 'Eroare la înregistrarea cu Google.');
 
                 localStorage.setItem('token', data.access_token);
+                // Loghează instant utilizatorul în aplicație
+                if (onLoginSuccess) onLoginSuccess(data.user);
+                // Trimite-l direct pe site complet autentificat
                 setActiveTab('acasa');
             } catch (err) {
                 setError(err.message);

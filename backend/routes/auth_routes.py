@@ -156,11 +156,17 @@ def verify_email(data: VerifyEmailModel, db: Session = Depends(get_db)):
 @router.post("/login")
 def login_user(credentials: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == credentials.email).first()
-    if not user or not user.password_hash:
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email sau parolă incorectă."
         )
+
+    # Dacă utilizatorul nu are parolă setată (de ex. a fost creat anterior prin Google),
+    # îi setăm acum parola introdusă pentru a-i permite accesul manual.
+    if not user.password_hash:
+        user.password_hash = pwd_context.hash(credentials.password)
+        db.commit()
 
     if not pwd_context.verify(credentials.password, user.password_hash):
         raise HTTPException(
@@ -204,6 +210,10 @@ def google_auth(data: GoogleAuthModel, db: Session = Depends(get_db)):
         db.add(user)
         db.commit()
         db.refresh(user)
+    else:
+        if user.is_verified == 0:
+            user.is_verified = 1
+            db.commit()
 
     return {
         "access_token": "fake-google-jwt-token-example",

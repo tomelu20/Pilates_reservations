@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // ==========================================
 // 1. NAVBAR COMPONENT
 // ==========================================
-function Navbar({ activeTab, setActiveTab }) {
+function Navbar({ activeTab, setActiveTab, currentUser, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -46,14 +46,28 @@ function Navbar({ activeTab, setActiveTab }) {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center">
-            <button
-                onClick={() => setActiveTab('devino-membru')}
-                className="bg-[#8C5E48] hover:bg-[#734B38] text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg"
-            >
-              Devino Membru
-            </button>
+          {/* CTA Button sau Salutare / Logout dacă e logat */}
+          <div className="hidden md:flex items-center gap-4">
+            {currentUser ? (
+                <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold text-[#3A322C]">
+                  Salut, {currentUser.nume || 'Membru'}!
+                </span>
+                  <button
+                      onClick={onLogout}
+                      className="bg-gray-200 hover:bg-gray-300 text-[#3A322C] px-4 py-2 rounded-full text-xs font-medium transition"
+                  >
+                    Ieșire
+                  </button>
+                </div>
+            ) : (
+                <button
+                    onClick={() => setActiveTab('devino-membru')}
+                    className="bg-[#8C5E48] hover:bg-[#734B38] text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                >
+                  Devino Membru
+                </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -91,15 +105,28 @@ function Navbar({ activeTab, setActiveTab }) {
                     {item.label}
                   </button>
               ))}
-              <button
-                  onClick={() => {
-                    setActiveTab('devino-membru');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full text-center bg-[#8C5E48] text-white px-4 py-2.5 rounded-full text-sm font-medium mt-2 shadow"
-              >
-                Devino Membru
-              </button>
+
+              {currentUser ? (
+                  <button
+                      onClick={() => {
+                        onLogout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full text-center bg-gray-200 text-[#3A322C] px-4 py-2.5 rounded-full text-sm font-medium mt-2 shadow"
+                  >
+                    Ieșire cont
+                  </button>
+              ) : (
+                  <button
+                      onClick={() => {
+                        setActiveTab('devino-membru');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full text-center bg-[#8C5E48] text-white px-4 py-2.5 rounded-full text-sm font-medium mt-2 shadow"
+                  >
+                    Devino Membru
+                  </button>
+              )}
             </div>
         )}
       </header>
@@ -107,7 +134,7 @@ function Navbar({ activeTab, setActiveTab }) {
 }
 
 // ==========================================
-// 2. HERO COMPONENT (Cu loc rezervat pentru poză fundal)
+// 2. HERO COMPONENT
 // ==========================================
 function HeroSection({ setActiveTab }) {
   return (
@@ -131,7 +158,6 @@ function HeroSection({ setActiveTab }) {
             Peste 8 ani de experiență în ghidarea ta spre armonie interioară, forță și flexibilitate. Echipamente de top Reformer, instructor dedicat și un spațiu creat pentru starea ta de bine.
           </p>
 
-          {/* Butoane acțiune rapide */}
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <button
                 onClick={() => setActiveTab('program')}
@@ -147,7 +173,6 @@ function HeroSection({ setActiveTab }) {
             </button>
           </div>
 
-          {/* Grid scurt de facilități */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {[
               "Suprafață generoasă de peste 600 mp",
@@ -164,7 +189,6 @@ function HeroSection({ setActiveTab }) {
             ))}
           </div>
 
-          {/* Banner partener / echipamente */}
           <div className="mt-12 bg-[#26211D] text-white rounded-2xl p-6 md:p-8 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
             <div className="text-left">
               <span className="text-xs uppercase tracking-widest text-[#D9CEC3] font-semibold">Partener Oficial Echipamente</span>
@@ -318,7 +342,6 @@ function InstructorsSection({ setActiveTab }) {
             </button>
           </div>
 
-          {/* Secțiune poză de grup echipă */}
           <div className="mt-20">
             <div className="inline-block bg-[#8C5E48]/10 text-[#8C5E48] text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
               Suport Inclus
@@ -495,11 +518,11 @@ function Footer({ setActiveTab }) {
 // ==========================================
 // 9. MAIN APP / HOME COMPONENT
 // ==========================================
-export default function HomePage({ activeTab, setActiveTab }) {
+export default function HomePage({ activeTab, setActiveTab, currentUser, onLogout }) {
   return (
       <div className="min-h-screen bg-[#FDFBF7] font-sans text-[#3A322C] flex flex-col selection:bg-[#8C5E48] selection:text-white">
         {/* Navbar Comun */}
-        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} currentUser={currentUser} onLogout={onLogout} />
 
         {/* Zonă de conținut dinamic în funcție de tab-ul selectat */}
         <main className="flex-grow">
